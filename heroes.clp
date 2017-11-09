@@ -1,24 +1,3 @@
-(defclass HERO
-    (is-a USER)
-    (role concrete)
-    (slot strategy)
-    (slot mechanics)
-    (slot attack_type)
-    (slot attack_speed)
-    (slot mobility)
-    (slot teamwork))
-
-(defclass PLAYER
-    (is-a USER)
-    (role concrete)
-    (slot skill)
-    (slot aim)
-    (slot aiming_preference)
-    (slot reaction_time)
-    (slot wits)
-    (slot weapon_preference)
-    (slot teamwork))
-
 (definstances HERO-INSTANCES
     (Doomfist of HERO
         (strategy medium)
@@ -118,7 +97,7 @@
         (attack_speed semi_auto)
         (mobility medium)
         (teamwork low))
-    (DVA of HERO
+    (D.Va of HERO
         (strategy medium)
         (mechanics low)
         (attack_type hitscan)

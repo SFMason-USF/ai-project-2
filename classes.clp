@@ -1,0 +1,20 @@
+(defclass HERO
+    (is-a USER)
+    (role concrete)
+    (slot strategy)
+    (slot mechanics)
+    (slot attack_type)
+    (slot attack_speed)
+    (slot mobility)
+    (slot teamwork))
+
+(defclass PLAYER
+    (is-a USER)
+    (role concrete)
+    (slot skill)
+    (slot aim)
+    (slot aiming_preference)
+    (slot reaction_time)
+    (slot wits)
+    (slot weapon_preference)
+    (slot teamwork))
