@@ -1,3 +1,5 @@
+(printout t "Loading heroes..." crlf)
 (load classes.clp)
 (load heroes.clp)
 (reset)
+(printout t "Done loading heroes." crlf)
