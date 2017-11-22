@@ -17,7 +17,7 @@
     )
     (McCree of HERO
         (strategy low)
-        (mechanics medium)
+        (mechanics high)
         (attack_type hitscan)
         (attack_speed semi_auto)
         (mobility low)

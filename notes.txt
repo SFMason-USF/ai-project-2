@@ -20,8 +20,187 @@ A Player is defined by his/her:
 	teamwork			{ level } //how much the player likes to rely on and work with a team
 
 Rules:
-	Plan:	For skillful players, determine playstyle. Then determine weapon type. Then assign hero.
-			For bad players, throw them on healer or tank based on projectile affinity, teamwork
+	~low skill:
+		bastion
+		dva
+		lucio
+		mercy
+		pharah
+		repear
+		rein
+		hog
+		sym
+		torb
+		winston
+			~teamwork low:
+				reaper
+			~teamwork med:
+				bastion
+				pharah
+				sym
+				winston
+				torb
+					~aiming_preference flick:
+						pharah
+						torb
+							~aim low/med:
+								torb
+							~aim high:
+								pharah
+					~aiming_preference track:
+						bastion
+						sym
+						winston
+							~aim low:
+								sym
+								winston
+									~wits low:
+										sym
+									~wits med/high:
+										winston
+							~aim high:
+								bastion
+			~teamwork high:
+				dva
+				lucio
+				mercy
+				rein
+				hog
+					~weapon_preference hitscan:
+						dva
+					~weapon_preference projectile:
+						lucio
+						mercy
+						rein
+						hog
+							~aim low:
+								mercy
+								rein
+									~wits med/low:
+										mercy
+									~wits high:
+										rein
+							~aim medium:
+								lucio
+							~aim high:
+								hog
+	~medium skill:
+		bastion
+		hanzo
+		junkrat
+		mccree
+		mei
+		orisa
+		pharah
+		repear
+		soldier
+		widow
+		winston
+		zarya
+			~weapon_preference hitscan:
+				bastion
+				mccree
+				reaper
+				soldier
+				widow
+				winston
+				zarya
+					~teamwork high:
+						zarya
+					~teamwork medium:
+						mccree
+						soldier
+						winston
+							~aiming_preference tracking:
+								soldier
+								winston
+									~aim low:
+										winston
+									~aim med/high:
+										soldier
+							~aiming_preference flicking:
+								mccree
+					~teamwork high:
+						bastion
+			~weapon_preference projectile:
+				hanzo
+				junkrat
+				mei
+				orisa
+				pharah
+					~aiming_preference track:
+						mei
+						orisa
+							~teamwork med/low:
+								mei
+							~teamwork high:
+								orisa
+					~aiming_preference flick:
+						hanzo
+						junkrat
+						pharah
+							~aim low:
+								junkrat
+							~aim med:
+								pharah
+							~aim high:
+								hanzo
+	~high skill:
+		ana
+		doomfist
+		genji
+		hanzo
+		mcree
+		mei
+		soldier
+		sombra
+		tracer
+		widow
+		zen
+			~teamwork high:
+				ana
+				zen
+					~weapon_preference hitscan:
+						ana
+					~weapon_preference projectile:
+						zen
+			~teamwork medium:
+				mccree
+				mei
+				soldier
+					~aiming_preference flick:
+						mccree
+					~aiming_preference track:
+						mei
+						soldier
+							~weapon_preference hitscan:
+								soldier
+							~weapon_preference projectile:
+								mei
+			~teamwork low:
+				doomfist
+				genji
+				hanzo
+				tracer
+				widow
+					~weapon_preference hitscan:
+						tracer
+						widow
+							~reaction_time high/med:
+								tracer
+							~reaction_time low:
+								widow
+					~weapon_preference projectile:
+						doomfist
+						genji
+						hanzo
+							~reaction_time low:
+								hanzo
+							~reaction_time med:
+								doomfist
+							~reaction_time high:
+								genji
+
 
 ============
 CLIPS Notes:

@@ -79,3 +79,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Recommendation rules;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defrule new-player
+    (object (is-a PLAYER) (skill low))
+    =>
+)
