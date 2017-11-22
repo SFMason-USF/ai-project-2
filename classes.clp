@@ -1,3 +1,4 @@
+;Defines a hero; one instance will be selected as the output value
 (defclass HERO
     (is-a USER)
     (role concrete)
@@ -8,6 +9,7 @@
     (slot mobility)
     (slot teamwork))
 
+;Defines a player; fields in this will be used to determine which hero is best for this player
 (defclass PLAYER
     (is-a USER)
     (role concrete)

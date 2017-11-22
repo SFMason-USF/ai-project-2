@@ -1,1 +1,73 @@
 Overwatch character recommender
+
+let level = { low, medium, high }
+
+A hero is defined by his/her:
+	strategy 			{ level }
+	mechanics 			{ level }
+	attack_type 		{ projectile, hitscan }
+	attack_speed		{ semi_auto, auto }
+	mobility			{ level }
+	teamwork			{ level }
+
+A Player is defined by his/her:
+	skill				{ level } //Can determine by fps experience
+	aim					{ level }
+	aiming_preference	{ flicking, tracking }
+	reaction_time		{ level } //note: high means quick, low means slow
+	wits				{ level } //note: similar to reaction_time, but more about decision-making than instinct
+	weapon_preference	{ projectile, hitscan }
+	teamwork			{ level } //how much the player likes to rely on and work with a team
+
+Rules:
+	Plan:	For skillful players, determine playstyle. Then determine weapon type. Then assign hero.
+			For bad players, throw them on healer or tank based on projectile affinity, teamwork
+
+============
+CLIPS Notes:
+============
+2.4.1.1 Ordered facts
+	(assert (color red)) - adds unordered fact (color red) to facts. color is symbol denoting relation (e.g. (father-of jack bill)) and red is the descriptive field
+
+Example of user input:
+(defrule read-input
+	;if
+	;No conditions: always run
+	=>
+	;then
+	(printout t "Name a primary color" crlf) ;print message to terminal (t) followed by a carriage return + line feed
+	(assert (color (read))) ;read a value from the user, then assert it as an unordered fact of the form (color [symbol]) where [symbol] is a symbol value made from the user's input
+)
+(defrule check-input
+	?color <- (color ?color-value&red|yellow|blue)	;execute for each fact, store any (color [symbol]) fact into ?color if [symbol] is red, yellow, or blue
+													;In other words, every fact is matched against (color [symbol]).
+													;If it's a match, then it tests that [symbol] against red|yellow|blue.
+													;If it's still a match, then store into ?color.
+													;Then since a match was found the condition will evaluate to truthy and thus execute the rule.
+													;See Basic Programming Guide, 5.4.1.3, example 1
+	=>
+	(retract ?color) ;Take the read-in color fact out of the fact pool, since we're done with it now
+	(printout t "Correct" crlf) ;Perform all actions that need to happen when good input is supplied
+)
+
+Example of testing for an object with slots:
+(defrule test-for-object-of-type
+	(object
+		(is-a TYPENAME)
+	)
+	=> ;do nothing
+)
+(defrule test-for-object-with-slot
+	(object
+		(is-a RECTANGLE)
+		(area)
+	)
+	=> ;do nothing
+)
+(defrule test-for-slot-value
+	(object
+		(is-a DOG)
+		(tail long|curly)
+	)
+	=> ;do nothing
+)
