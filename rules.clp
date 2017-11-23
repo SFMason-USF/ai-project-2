@@ -27,6 +27,11 @@
     ?answer
 )
 
+(deffunction recommend-hero (?hero-name)
+    (printout t crlf "The best hero for you would be:" crlf ?hero-name crlf)
+    (exit)
+)
+
 (defrule get-skill
     ?run-flag <- (get skill)
     =>
@@ -80,7 +85,329 @@
 ;;Recommendation rules;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;Section- Low Skill;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+
+;1. If the player has low skill, ask them how cooperative they are
 (defrule new-player
     (object (is-a PLAYER) (skill low))
     =>
+    (assert (get teamwork))
+)
+
+;2. If the player has low skill and dislikes teamwork, recommend Reaper
+(defrule bad-independent
+    (object (is-a PLAYER) (skill low) (teamwork low))
+    =>
+    (recommend-hero Reaper)
+)
+
+;3. If the player is bad and likes a medium amount of cooperation, ask for aiming preference
+(defrule bad-medteam
+    (object (is-a PLAYER) (skill low) (teamwork medium))
+    =>
+    (assert (get aiming_preference))
+)
+
+;4. If the player is bad, prefers medium teamwork, and likes flicking, ask how their aim is
+(defrule bad-medteam-flick
+    (object (is-a PLAYER) (skill low) (teamwork medium) (aiming_preference flicking))
+    =>
+    (assert (get aim))
+)
+
+;5. If the player is bad, prefers medium teamwork, likes flicking, and isn't good at aiming
+(defrule bad-medteam-flick-badaim
+    (object (is-a PLAYER) (skill low) (teamwork medium) (aiming_preference flicking) (aim low|medium))
+    =>
+    (recommend-hero Torbjorn)
+)
+
+;6. If the player is bad, prefers medium teamwork, likes flicking, and is good at aiming, recommend Pharah
+(defrule bad-medteam-flick-goodaim
+    (object (is-a PLAYER) (skill low) (teamwork medium) (aiming_preference flicking) (aim high))
+    =>
+    (recommend-hero Pharah)
+)
+
+;7. If the player is bad, prefers medium teamwork, and likes tracking, ask them how their aim is
+(defrule bad-medteam-track
+    (object (is-a PLAYER) (skill low) (teamwork medium) (aiming_preference tracking))
+    =>
+    (assert (get aim))
+)
+
+;8. If the player is bad, prefers medium teamwork, likes tracking, and has bad aim, ask them how their wits are
+(defrule bad-medteam-track-badaim
+    (object (is-a PLAYER) (skill low) (teamwork medium) (aiming_preference tracking) (aim low))
+    =>
+    (assert (get wits))
+)
+
+;9. If the player is bad, prefers medium teamwork, likes tracking, has bad aim, and is bad under pressure, recommend sym
+(defrule bad-medteam-track-badaim-badwits
+    (object (is-a PLAYER) (skill low) (teamwork medium) (aiming_preference tracking) (aim low) (wits low))
+    =>
+    (recommend-hero Symmetra)
+)
+
+;10. If the player is bad, prefers medium teamwork, likes tracking, has bad aim, and can think on their feet, recommend Winston
+(defrule bad-medteam-track-badaim-goodwits
+    (object (is-a PLAYER) (skill low) (teamwork medium) (aiming_preference tracking) (aim low) (wits medium|high))
+    =>
+    (recommend-hero Winston)
+)
+
+;11. If the player is bad, prefers medium teamwork, likes tracking, and has good aim, recommend Bastion
+(defrule bad-medteam-track-goodaim
+    (object (is-a PLAYER) (skill low) (teamwork medium) (aiming_preference tracking) (aim high))
+    =>
+    (recommend-hero Bastion)
+)
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;Section- Med Skill;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+
+;12. If the player is ok, ask them for their preferred weapon type
+(defrule ok-player
+    (object (is-a player) (skill medium))
+    =>
+    (assert (get weapon_preference))
+)
+
+;13. If the player is ok and likes hitscan, ask them how cooperative they are
+(defrule ok-hitscan
+    (object (is-a PLAYER) (skill medium) (weapon_preference hitscan))
+    =>
+    (assert (get teamwork))
+)
+
+;14. If the player is ok, likes hitscan, and is cooperative, then recommend Zarya
+(defrule ok-hitscan-cooperative
+    (object (is-a PLAYER) (skill medium) (weapon_preference hitscan) (teamwork high))
+    =>
+    (recommend-hero Zarya)
+)
+
+;15. If the player is ok, likes hitscan, and is somewhat cooperative, ask them for aiming preference
+(defrule ok-hitscan-medteam
+    (object (is-a PLAYER) (skill medium) (weapon_preference hitscan) (teamwork medium))
+    =>
+    (assert (get aiming_preference))
+)
+
+;16. If the player is ok, likes hitscan, is somewhat cooperative, and likes tracking, ask for aiming ability
+(defrule ok-hitscan-medteam-track
+    (object (is-a PLAYER) (skill medium) (weapon_preference hitscan) (teamwork medium) (aiming_preference tracking))
+    =>
+    (assert (get aim))
+)
+
+;17. If the player is ok, likes hitscan, is somewhat cooperative, likes tracking, and is bad at aiming, recommend Winston
+(defrule ok-hitscan-medteam-track-badaim
+    (object (is-a PLAYER) (skill medium) (weapon_preference hitscan) (teamwork medium) (aiming_preference tracking) (aim low))
+    =>
+    (recommend-hero Winston)
+)
+
+;18. If the player is ok, likes hitscan, is somewhat cooperative, likes tracking, and is decent at aiming, recommend Soldier
+(defrule ok-hitscan-medteam-track-goodaim
+    (object (is-a PLAYER) (skill medium) (weapon_preference hitscan) (teamwork medium) (aiming_preference tracking) (aim medium|high))
+    =>
+    (recommend-hero Soldier76)
+)
+
+;19. If the player is ok, likes hitscan, is somewhat cooperative, and likes flicking, recommend McCree
+(defrule ok-hitscan-medteam-flick
+    (object (is-a PLAYER) (skill medium) (weapon_preference hitscan) (teamwork medium) (aiming_preference flicking))
+    =>
+    (recommend-hero McCree)
+)
+
+;20. If the player is ok, likes hitscan, and is very cooperative, recommend Bastion
+(defrule ok-hitscan-cooperative
+    (object (is-a PLAYER) (skill medium) (weapon_preference hitscan) (teamwork high))
+    =>
+    (recommend-hero Bastion)
+)
+
+;21. If the player is ok and likes projectiles, ask for aim preference
+(defrule ok-projectile
+    (object (is-a PLAYER) (skill medium) (weapon_preference projectile))
+    =>
+    (assert (get aiming_preference))
+)
+
+;22. If the player is ok, likes projectiles, and likes tracking, ask for teamwork
+(defrule ok-projectile-track
+    (object (is-a PLAYER) (skill medium) (weapon_preference projectile) (aiming_preference tracking))
+    =>
+    (assert (get teamwork))
+)
+
+;23. If the player is ok, likes projectiles, likes tracking, and is independent or a little cooperative, recommend Mei
+(defrule ok-projectile-track-independent
+    (object (is-a PLAYER) (skill medium) (weapon_preference projectile) (aiming_preference tracking) (teamwork low|medium))
+    =>
+    (recommend-hero Mei)
+)
+
+;24. If the player is ok, likes projectiles, likes tracking, and is very cooperative, recommend Orisa
+(defrule ok-projectile-track-cooperative
+    (object (is-a PLAYER) (skill medium) (weapon_preference projectile) (aiming_preference tracking) (teamwork high))
+    =>
+    (recommend-hero Orisa)
+)
+
+;25. If the player is ok, likes projectiles, and likes flicking, ask for aim
+(defrule ok-projectile-flick
+    (object (is-a PLAYER) (skill medium) (weapon_preference projectile) (aiming_preference flicking))
+    =>
+    (assert (get aim))
+)
+
+;26. If the player is ok, likes projectiles, likes flicking, and has bad aim, recommend Junkrat
+(defrule ok-projectile-flick-badaim
+    (object (is-a PLAYER) (skill medium) (weapon_preference projectile) (aiming_preference flicking) (aim low))
+    =>
+    (recommend-hero Junkrat)
+)
+
+;27. If the player is ok, likes projectiles, likes flicking, and has decent aim, recommend Pharah
+(defrule ok-projectile-flick-medaim
+    (object (is-a PLAYER) (skill medium) (weapon_preference projectile) (aiming_preference flicking) (aim medium))
+    =>
+    (recommend-hero Pharah)
+)
+
+;28. If the player is ok, likes projectiles, likes flicking, and has good aim, recommend Hanzo
+(defrule ok-projectile-flick-goodaim
+    (object (is-a PLAYER) (skill medium) (weapon_preference projectile) (aiming_preference flicking) (aim high))
+    =>
+    (recommend-hero Hanzo)
+)
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;Section - High Skill;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+
+;29. If the player is good, ask them how cooperative they are
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
+)
+
+;30. If the player is good and cooperative, ask them their preferred weapon type
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
+)
+
+;31. If the player is good, cooperative, and likes hitscan, recommend Ana
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
+)
+
+;32. If the player is good, cooperative, and likes projectiles, recommend Zenyatta
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
+)
+
+;33. If the player is good and somewhat cooperative, ask their aiming preference
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
+)
+
+;34. If the player is good, somewhat cooperative, and likes flicking, recommend McCree
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
+)
+
+;35. If the player is good, somewhat cooperative, and likes tracking, ask them their weapon preference
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
+)
+
+;36. If the player is good, somewhat cooperative, likes tracking, and likes hitscan, recommend Soldier
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
+)
+
+;37. If the player is good, somewhat cooperative, likes tracking, and likes projectiles, recommend Mei
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
+)
+
+;38. If the player is good and independent, ask their weapon preference
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
+)
+
+;39. If the player is good, independent, and likes hitscan, ask their reaction time
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
+)
+
+;40. If the player is good, independent, likes hitscan, and has decent/good reaction time, recommend Tracer
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
+)
+
+;41. If the player is good, independent, likes hitscan, and has bad reaction time, recommend Widow
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
+)
+
+;42. If the player is good, independent, and likes projectiles, ask their reaction time
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
+)
+
+;43. If the player is good, independent, likes projectiles, and has bad reaction time, recommend Hanzo
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
+)
+
+;44. If the player is good, independent, likes projectiles, and had decent reactin time, recommend Doomfist
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
+)
+
+;45. If the player is good, independent, likes projectiles, and has good reaction time, recommend Genji
+(defrule good-
+    (object (is-a PLAYER) (skill high) ())
+    =>
+    ()
 )
