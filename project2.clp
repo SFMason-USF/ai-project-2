@@ -1,3 +1,249 @@
+;Overwatch Hero Recommendation System
+;Author:        Spenser Mason
+;Description:   This expert system will recommend a hero to start out with for newcomers to the video game Overwatch.
+;Usage:         The easiest way to run this system is to run CLIPS from the command line with this file as the -f option.
+;               e.g: CLIPSDOS64.exe -f project2.clp
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;; Classes ;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;
+
+;Defines a hero; one instance will be selected as the output value
+(defclass HERO
+    (is-a USER)
+    (role concrete)
+    (slot strategy)
+    (slot mechanics)
+    (slot attack_type)
+    (slot attack_speed)
+    (slot mobility)
+    (slot teamwork))
+
+;Defines a player; fields in this will be used to determine which hero is best for this player
+(defclass PLAYER
+    (is-a USER)
+    (role concrete)
+    (slot skill)
+    (slot aim)
+    (slot aiming_preference)
+    (slot reaction_time)
+    (slot wits)
+    (slot weapon_preference)
+    (slot teamwork))
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;; Instances ;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defglobal ?*User* = (make-instance User of PLAYER))
+
+(definstances HERO-INSTANCES
+    (Doomfist of HERO
+        (strategy medium)
+        (mechanics high)
+        (attack_type projectile)
+        (attack_speed semi_auto)
+        (mobility high)
+        (teamwork low)
+    )
+    (Genji of HERO
+        (strategy high)
+        (mechanics high)
+        (attack_type projectile)
+        (attack_speed semi_auto)
+        (mobility high)
+        (teamwork low)
+    )
+    (McCree of HERO
+        (strategy low)
+        (mechanics high)
+        (attack_type hitscan)
+        (attack_speed semi_auto)
+        (mobility low)
+        (teamwork medium)
+    )
+    (Pharah of HERO
+        (strategy low)
+        (mechanics medium)
+        (attack_type projectile)
+        (attack_speed semi_auto)
+        (mobility high)
+        (teamwork medium)
+    )
+    (Reaper of HERO
+        (strategy medium)
+        (mechanics low)
+        (attack_type hitscan)
+        (attack_speed semi_auto)
+        (mobility medium)
+        (teamwork low)
+    )
+    (Soldier76 of HERO
+        (strategy low)
+        (mechanics medium)
+        (attack_type hitscan)
+        (attack_speed auto)
+        (mobility medium)
+        (teamwork medium)
+    )
+    (Sombra of HERO
+        (strategy high)
+        (mechanics medium)
+        (attack_type hitscan)
+        (attack_speed auto)
+        (mobility medium)
+        (teamwork medium)
+    )
+    (Tracer of HERO
+        (strategy low)
+        (mechanics high)
+        (attack_type hitscan)
+        (attack_speed auto)
+        (mobility high)
+        (teamwork low)
+    )
+    (Bastion of HERO
+        (strategy medium)
+        (mechanics low)
+        (attack_type hitscan)
+        (attack_speed auto)
+        (mobility low)
+        (teamwork high)
+    )
+    (Hanzo of HERO
+        (strategy low)
+        (mechanics high)
+        (attack_type projectile)
+        (attack_speed semi_auto)
+        (mobility medium)
+        (teamwork low)
+    )
+    (Junkrat of HERO
+        (strategy medium)
+        (mechanics medium)
+        (attack_type projectile)
+        (attack_speed semi_auto)
+        (mobility high)
+        (teamwork low)
+    )
+    (Mei of HERO
+        (strategy high)
+        (mechanics medium)
+        (attack_type projectile)
+        (attack_speed semi_auto)
+        (mobility low)
+        (teamwork medium)
+    )
+    (Torbjorn of HERO
+        (strategy medium)
+        (mechanics low)
+        (attack_type projectile)
+        (attack_speed semi_auto)
+        (mobility low)
+        (teamwork medium)
+    )
+    (Widowmaker of HERO
+        (strategy low)
+        (mechanics high)
+        (attack_type hitscan)
+        (attack_speed semi_auto)
+        (mobility medium)
+        (teamwork low)
+    )
+    (D.Va of HERO
+        (strategy medium)
+        (mechanics low)
+        (attack_type hitscan)
+        (attack_speed auto)
+        (mobility high)
+        (teamwork high)
+    )
+    (Orisa of HERO
+        (strategy medium)
+        (mechanics medium)
+        (attack_type projectile)
+        (attack_speed auto)
+        (mobility low)
+        (teamwork high)
+    )
+    (Reinhardt of HERO
+        (strategy medium)
+        (mechanics low)
+        (attack_type hitscan)
+        (attack_speed semi_auto)
+        (mobility medium)
+        (teamwork high)
+    )
+    (Roadhog of HERO
+        (strategy low)
+        (mechanics low)
+        (attack_type projectile)
+        (attack_speed semi_auto)
+        (mobility low)
+        (teamwork medium)
+    )
+    (Winston of HERO
+        (strategy medium)
+        (mechanics low)
+        (attack_type hitscan)
+        (attack_speed auto)
+        (mobility high)
+        (teamwork medium)
+    )
+    (Zarya of HERO
+        (strategy high)
+        (mechanics medium)
+        (attack_type hitscan)
+        (attack_speed auto)
+        (mobility low)
+        (teamwork high)
+    )
+    (Ana of HERO
+        (strategy low)
+        (mechanics high)
+        (attack_type hitscan)
+        (attack_speed semi_auto)
+        (mobility low)
+        (teamwork high)
+    )
+    (Lucio of HERO
+        (strategy low)
+        (mechanics low)
+        (attack_type projectile)
+        (attack_speed auto)
+        (mobility medium)
+        (teamwork high)
+    )
+    (Mercy of HERO
+        (strategy medium)
+        (mechanics low)
+        (attack_type projectile)
+        (attack_speed auto)
+        (mobility medium)
+        (teamwork high)
+    )
+    (Symmetra of HERO
+        (strategy medium)
+        (mechanics low)
+        (attack_type hitscan)
+        (attack_speed auto)
+        (mobility low)
+        (teamwork medium)
+    )
+    (Zenyatta of HERO
+        (strategy low)
+        (mechanics high)
+        (attack_type projectile)
+        (attack_speed semi_auto)
+        (mobility low)
+        (teamwork high)
+    )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;; Rules ;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defrule main (declare(salience 10))
     =>
     (assert (get skill)) ;Start by checking skill
@@ -30,7 +276,6 @@
 (deffunction recommend-hero (?hero)
     (printout t crlf "The best hero for you would be:" crlf)
     (send ?hero print)
-    (printout t crlf)
     (exit)
 )
 
@@ -174,7 +419,7 @@
 
 ;12. If the player is ok, ask them for their preferred weapon type
 (defrule ok-player
-    (object (is-a player) (skill medium))
+    (object (is-a PLAYER) (skill medium))
     =>
     (assert (get weapon_preference))
 )
@@ -348,7 +593,7 @@
 (defrule good-medteam-track-hitscan
     (object (is-a PLAYER) (skill high) (teamwork medium) (aiming_preference tracking) (weapon_preference hitscan))
     =>
-    (recommend [Soldier76])
+    (recommend-hero [Soldier76])
 )
 
 ;37. If the player is good, somewhat cooperative, likes tracking, and likes projectiles, recommend [Mei]
@@ -387,29 +632,33 @@
 )
 
 ;42. If the player is good, independent, and likes projectiles, ask their reaction time
-(defrule good-
+(defrule good-independent-projectile
     (object (is-a PLAYER) (skill high) (teamwork low) (weapon_preference projectile))
     =>
     (assert (get reaction_time))
 )
 
 ;43. If the player is good, independent, likes projectiles, and has bad reaction time, recommend [Hanzo]
-(defrule good-
+(defrule good-independent-projectile-slow
     (object (is-a PLAYER) (skill high) (teamwork low) (weapon_preference projectile) (reaction_time low))
     =>
     (recommend-hero [Hanzo])
 )
 
 ;44. If the player is good, independent, likes projectiles, and had decent reaction time, recommend [Doomfist]
-(defrule good-
+(defrule good-independent-projectile-avgspeed
     (object (is-a PLAYER) (skill high) (teamwork low) (weapon_preference projectile) (reaction_time medium))
     =>
     (recommend-hero [Doomfist])
 )
 
 ;45. If the player is good, independent, likes projectiles, and has good reaction time, recommend [Genji]
-(defrule good-
+(defrule good-independent-projectile-quick
     (object (is-a PLAYER) (skill high) (teamwork low) (weapon_preference projectile) (reaction_time high))
     =>
     (recommend-hero [Genji])
 )
+
+(reset) ;Prepare ourselves...
+
+(run) ;And so it begins.

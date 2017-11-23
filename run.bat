@@ -9,4 +9,5 @@
 (load rules.clp)
 (printout t "Done loading rules" crlf)
 (reset)
-(printout t "System ready." crlf)
+(printout t "System ready." crlf crlf)
+(run)
