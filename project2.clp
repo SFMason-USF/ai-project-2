@@ -329,6 +329,61 @@
     (exit)
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;; Filters ;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;
+
+;Filter out heroes that are too hard for the user
+;(defrule filter-heroes-skill-low
+;    (object (is-a PLAYER) (skill low))
+;    ?hero <- (object (is-a HERO))
+;    =>
+;    (if (not (send ?hero difficulty-easy)) then
+;        (send ?hero delete)
+;    )
+;)
+
+;Filter out heroes that are too hard for the user
+;(defrule filter-heroes-medium
+;    (object (is-a PLAYER) (skill medium))
+;    ?hero <- (object (is-a HERO))
+;    =>
+;    (if (send ?hero difficulty-hard) then
+;        (send ?hero delete)
+;    )
+;)
+
+;Filter based on weapon preference
+;(defrule filter-heroes-weapon
+;    (object (is-a PLAYER) (weapon_preference ~nil))
+;    ?hero <- (object (is-a HERO))
+;    =>
+;    (if (neq (send ?hero get-attack_type) (send ?*User* get-weapon_preference)) then
+;        (send ?hero delete)
+;    )
+;)
+
+;Filter out heroes that are too hard for the user
+;(defrule filter-heroes-aiming_preference
+;    (object (is-a PLAYER) (aiming_preference ~nil))
+;    ?hero <- (object (is-a HERO))
+;    =>
+;    (switch (send ?hero attack_speed)
+;        (case auto then
+;            ;if the user likes flicking and this is a tracking hero, remove it
+;            (if (eq (send ?*User* get-aiming_preference) flicking) then
+;                (send ?hero delete)
+;            )
+;        )
+;        (case semi_auto then
+;            ;if the user likes tracking and this is a flicking hero, remove it
+;            (if (eq (send ?*User* get-aiming_preference) tracking) then
+;                (send ?hero delete)
+;            )
+;        )
+;    )
+;)
+
 (defrule get-skill
     ?run-flag <- (get skill)
     =>
@@ -390,7 +445,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;If we're down to one hero, recommend him
-(defrule make-recommendation
+(defrule make-recommendation (declare (salience 5))
     (= (length$ (find-all-instances ((?hero HERO)) (class HERO))) 1) ;There is only 1 hero left
     =>
     ;Recommend the hero
@@ -400,7 +455,7 @@
 )
 
 ;If we've asked all our questions and still can't decide on a hero, tell the user to pick one of the remaining choices
-(defrule stumped
+(defrule stumped (declare (salience 5))
     (> (length$ (find-all-instances ((?hero HERO)) (class HERO))) 1) ;There are multiple heroes left
     (>= ?*Questions-Asked* 7) ;All questions asked
     =>
@@ -410,7 +465,7 @@
 )
 
 ;If we have no options for the user's particular attributes, tell them so and exit
-(defrule out-of-options
+(defrule out-of-options (declare (salience 5))
     (< (length$ (find-all-instances ((?hero HERO)) (class HERO))) 1) ;No more options left
     =>
     (printout t "I have no idea who you should play. Try again and provide different answers." crlf)
