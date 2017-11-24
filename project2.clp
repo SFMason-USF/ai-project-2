@@ -1,3 +1,7 @@
+;TODO: Refactor to eliminate instances from consideration rather than simply running a decision tree
+;when (= (length$ (find-all-instances ((?hero HERO)) (class HERO))) 1) resolves to TRUE, make a recommendation
+
+
 ;Overwatch Hero Recommendation System
 ;Author:        Spenser Mason
 ;Description:   This expert system will recommend a hero to start out with for newcomers to the video game Overwatch.
@@ -19,6 +23,51 @@
     (slot mobility)
     (slot teamwork))
 
+(defmessage-handler HERO difficulty-rating
+    ;Get the difficulty of this hero based on its strategy and mechanics
+    primary ;message type
+    () ;parameters
+
+    ;convert ?self:strategy to a numerical rating
+    (switch ?self:strategy
+        (case low then (bind ?strategy 1))
+        (case medium then (bind ?strategy 2))
+        (case high then (bind ?strategy 3))
+    )
+    ;convert ?self:mechanics to a numerical rating
+    (switch ?self:mechanics
+        (case low then (bind ?mechanics 1))
+        (case medium then (bind ?mechanics 2))
+        (case high then (bind ?mechanics 3))
+    )
+    ;Reutrn the sum of the numerical difficulty ratings
+    (+ ?strategy ?mechanics)
+)
+
+(defmessage-handler HERO difficulty-easy
+    ;Return true if this hero has low for both strategy and mechanics, or low for one and medium for the other
+    primary
+    ()
+    (<= (send ?self difficulty-rating) 3)
+)
+
+(defmessage-handler HERO difficulty-medium
+    ;Return true if this hero is medium in strategy or mechanics
+    primary
+    ()
+    (and
+        (<= (send ?self difficulty-rating) 5)
+        (>= (send ?self difficulty-rating) 3)
+    )
+)
+
+(defmessage-handler HERO difficulty-hard
+    ;Return true if this hero is hard in strategy or mechanics, and at least medium in the other
+    primary
+    ()
+    (>= (send ?self difficulty-rating) 5)
+)
+
 ;Defines a player; fields in this will be used to determine which hero is best for this player
 (defclass PLAYER
     (is-a USER)
@@ -35,7 +84,8 @@
 ;;;;;; Instances ;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defglobal ?*User* = (make-instance User of PLAYER))
+(defglobal ?*User* = (make-instance User of PLAYER)) ;The user
+(defglobal ?*Questions-Asked* = 0)
 
 (definstances HERO-INSTANCES
     (Doomfist of HERO
@@ -282,6 +332,7 @@
 (defrule get-skill
     ?run-flag <- (get skill)
     =>
+    (bind ?*Questions-Asked (+ ?*Questions-Asked* 1))
     (send ?*User* put-skill (read-input "How much experience do you have in first person shooters? Enter low, medium, or high. " low medium high)) ;Store input into ?*User* after it's read and validated by read-input
     (retract ?run-flag)
 )
@@ -289,6 +340,7 @@
 (defrule get-aim
     ?run-flag <- (get aim)
     =>
+    (bind ?*Questions-Asked (+ ?*Questions-Asked* 1))
     (send ?*User* put-aim (read-input "How good are you at aiming? If you are not experienced in aiming, you can determine how good you'll be by how comfortable and fast you are with a mouse. Enter low, medium, or high. " low medium high))
     (retract ?run-flag)
 )
@@ -296,6 +348,7 @@
 (defrule get-aiming_preference
     ?run-flag <- (get aiming_preference)
     =>
+    (bind ?*Questions-Asked (+ ?*Questions-Asked* 1))
     (send ?*User* put-aiming_preference (read-input "What kind of aiming are you better at? Enter flicking (aim single shots quickly) or tracking (continuously keep your crosshair on a moving target). " flicking tracking)) ;Store input into ?*User*
     (retract ?run-flag)
 )
@@ -303,6 +356,7 @@
 (defrule get-reaction_time
     ?run-flag <- (get reaction_time)
     =>
+    (bind ?*Questions-Asked (+ ?*Questions-Asked* 1))
     (send ?*User* put-reaction_time (read-input "How fast is your reaction time? Enter low (slow), medium, or high (fast). " low medium high)) ;Store input into ?*User*
     (retract ?run-flag)
 )
@@ -310,6 +364,7 @@
 (defrule get-wits
     ?run-flag <- (get wits)
     =>
+    (bind ?*Questions-Asked (+ ?*Questions-Asked* 1))
     (send ?*User* put-wits (read-input "How are you at thinking on your feet and making good decisions in the moment? Enter low, medium, or high. " low medium high)) ;Store input into ?*User*
     (retract ?run-flag)
 )
@@ -317,6 +372,7 @@
 (defrule get-weapon_preference
     ?run-flag <- (get weapon_preference)
     =>
+    (bind ?*Questions-Asked (+ ?*Questions-Asked* 1))
     (send ?*User* put-weapon_preference (read-input "Do you prefer guns that hit whatever you're pointing at when you pull the trigger, or projectile weapons like rockets or a bow and arrows? Enter hitscan for guns and projectile for projectiles. " hitscan projectile)) ;Store input into ?*User*
     (retract ?run-flag)
 )
@@ -324,6 +380,7 @@
 (defrule get-teamwork
     ?run-flag <- (get teamwork)
     =>
+    (bind ?*Questions-Asked (+ ?*Questions-Asked* 1))
     (send ?*User* put-teamwork (read-input "How much do you like working with and relying on a team? Enter low (independent), medium, or high (cooperative). " low medium high)) ;Store input into ?*User*
     (retract ?run-flag)
 )
@@ -331,6 +388,34 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Recommendation rules;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
+
+;If we're down to one hero, recommend him
+(defrule make-recommendation
+    (= (length$ (find-all-instances ((?hero HERO)) (class HERO))) 1) ;There is only 1 hero left
+    =>
+    ;Recommend the hero
+    (foreach ?hero (find-all-instances ((?hero HERO)) (class HERO))
+        (recommend-hero ?hero)
+    )
+)
+
+;If we've asked all our questions and still can't decide on a hero, tell the user to pick one of the remaining choices
+(defrule stumped
+    (> (length$ (find-all-instances ((?hero HERO)) (class HERO))) 1) ;There are multiple heroes left
+    (>= ?*Questions-Asked* 7) ;All questions asked
+    =>
+    (printout t "I don't know what to recommend to you. Try one of the following heroes:" crlf)
+    (instances)
+    (exit)
+)
+
+;If we have no options for the user's particular attributes, tell them so and exit
+(defrule out-of-options
+    (< (length$ (find-all-instances ((?hero HERO)) (class HERO))) 1) ;No more options left
+    =>
+    (printout t "I have no idea who you should play. Try again and provide different answers." crlf)
+    (exit)
+)
 
     ;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;Section- Low Skill;;;
@@ -347,7 +432,7 @@
 (defrule bad-independent
     (object (is-a PLAYER) (skill low) (teamwork low))
     =>
-    (recommend-hero [Reaper])
+    (recommend-hero ?hero)
 )
 
 ;3. If the player is bad and likes a medium amount of cooperation, ask for aiming preference
@@ -661,4 +746,6 @@
 
 (reset) ;Prepare ourselves...
 
-(run) ;And so it begins.
+(printout t crlf crlf)
+
+;(run) ;And so it begins.
