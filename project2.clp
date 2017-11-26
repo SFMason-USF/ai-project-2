@@ -314,7 +314,7 @@
        then (bind ?answer (lowcase ?answer))
     )
     (while (not (member ?answer ?allowed-values)) do
-        (printout t ?prompt)
+        (printout t "Invalid input. " ?prompt)
         (bind ?answer (read))
         (if (lexemep ?answer)
             then (bind ?answer (lowcase ?answer))
