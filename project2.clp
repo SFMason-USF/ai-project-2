@@ -316,8 +316,8 @@
     (while (not (member ?answer ?allowed-values)) do
         (printout t "Invalid input. " ?prompt)
         (bind ?answer (read))
-        (if (lexemep ?answer)
-            then (bind ?answer (lowcase ?answer))
+        (if (lexemep ?answer) then
+            (bind ?answer (lowcase ?answer))
         )
     )
     ?answer
@@ -363,7 +363,7 @@
 ;    )
 ;)
 
-;Filter out heroes that are too hard for the user
+;Filter out heroes that don't fit the user's aiming preference
 ;(defrule filter-heroes-aiming_preference
 ;    (object (is-a PLAYER) (aiming_preference ~nil))
 ;    ?hero <- (object (is-a HERO))
@@ -378,6 +378,25 @@
 ;        (case semi_auto then
 ;            ;if the user likes tracking and this is a flicking hero, remove it
 ;            (if (eq (send ?*User* get-aiming_preference) tracking) then
+;                (send ?hero delete)
+;            )
+;        )
+;    )
+;)
+
+;Filter out heroes that are too reliant on their teams
+;(defrule filter-heroes-teamwork
+;    ?player <- (object (is-a PLAYER) (teamwork low))
+;    ?hero <- (object (is-a HERO))
+;    =>
+;    (switch (send ?user get-teamwork)
+;        (case low then
+;            (if (eq (send ?hero get-teamwork) high) then
+;                (send ?hero delete)
+;            )
+;        )
+;        (case high then
+;            (if (eq (send ?hero get-teamwork) low) then
 ;                (send ?hero delete)
 ;            )
 ;        )
