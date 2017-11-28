@@ -68,6 +68,14 @@
     (>= (send ?self difficulty-rating) 5)
 )
 
+;Filter out this hero
+(defmessage-handler HERO filter-out
+    primary
+    ()
+    =>
+    (assert (exclude (instance-name ?self)))
+)
+
 ;Defines a player; fields in this will be used to determine which hero is best for this player
 (defclass PLAYER
     (is-a USER)
@@ -323,86 +331,14 @@
     ?answer
 )
 
+;Final function. Print the recommended hero and info for that hero to user, then exit
 (deffunction recommend-hero (?hero)
     (printout t crlf "The best hero for you would be:" crlf)
     (send ?hero print)
     (exit)
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;; Filters ;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;
-
-;Filter out heroes that are too hard for the user
-;(defrule filter-heroes-skill-low
-;    (object (is-a PLAYER) (skill low))
-;    ?hero <- (object (is-a HERO))
-;    =>
-;    (if (not (send ?hero difficulty-easy)) then
-;        (send ?hero delete)
-;    )
-;)
-
-;Filter out heroes that are too hard for the user
-;(defrule filter-heroes-medium
-;    (object (is-a PLAYER) (skill medium))
-;    ?hero <- (object (is-a HERO))
-;    =>
-;    (if (send ?hero difficulty-hard) then
-;        (send ?hero delete)
-;    )
-;)
-
-;Filter based on weapon preference
-;(defrule filter-heroes-weapon
-;    (object (is-a PLAYER) (weapon_preference ~nil))
-;    ?hero <- (object (is-a HERO))
-;    =>
-;    (if (neq (send ?hero get-attack_type) (send ?*User* get-weapon_preference)) then
-;        (send ?hero delete)
-;    )
-;)
-
-;Filter out heroes that don't fit the user's aiming preference
-;(defrule filter-heroes-aiming_preference
-;    (object (is-a PLAYER) (aiming_preference ~nil))
-;    ?hero <- (object (is-a HERO))
-;    =>
-;    (switch (send ?hero attack_speed)
-;        (case auto then
-;            ;if the user likes flicking and this is a tracking hero, remove it
-;            (if (eq (send ?*User* get-aiming_preference) flicking) then
-;                (send ?hero delete)
-;            )
-;        )
-;        (case semi_auto then
-;            ;if the user likes tracking and this is a flicking hero, remove it
-;            (if (eq (send ?*User* get-aiming_preference) tracking) then
-;                (send ?hero delete)
-;            )
-;        )
-;    )
-;)
-
-;Filter out heroes that are too reliant on their teams
-;(defrule filter-heroes-teamwork
-;    ?player <- (object (is-a PLAYER) (teamwork low))
-;    ?hero <- (object (is-a HERO))
-;    =>
-;    (switch (send ?user get-teamwork)
-;        (case low then
-;            (if (eq (send ?hero get-teamwork) high) then
-;                (send ?hero delete)
-;            )
-;        )
-;        (case high then
-;            (if (eq (send ?hero get-teamwork) low) then
-;                (send ?hero delete)
-;            )
-;        )
-;    )
-;)
-
+;Prompt user for skill
 (defrule get-skill
     ?run-flag <- (get skill)
     =>
@@ -411,6 +347,7 @@
     (retract ?run-flag)
 )
 
+;Prompt user for aim
 (defrule get-aim
     ?run-flag <- (get aim)
     =>
@@ -419,6 +356,7 @@
     (retract ?run-flag)
 )
 
+;Prompt user for aiming_preference
 (defrule get-aiming_preference
     ?run-flag <- (get aiming_preference)
     =>
@@ -427,6 +365,7 @@
     (retract ?run-flag)
 )
 
+;Prompt user for reaction_time
 (defrule get-reaction_time
     ?run-flag <- (get reaction_time)
     =>
@@ -435,6 +374,7 @@
     (retract ?run-flag)
 )
 
+;Prompt user for wits
 (defrule get-wits
     ?run-flag <- (get wits)
     =>
@@ -443,6 +383,7 @@
     (retract ?run-flag)
 )
 
+;Prompt user for weapon_preference
 (defrule get-weapon_preference
     ?run-flag <- (get weapon_preference)
     =>
@@ -451,12 +392,87 @@
     (retract ?run-flag)
 )
 
+;Prompt user for teamwork
 (defrule get-teamwork
     ?run-flag <- (get teamwork)
     =>
     (bind ?*Questions-Asked (+ ?*Questions-Asked* 1))
     (send ?*User* put-teamwork (read-input "How much do you like working with and relying on a team? Enter low (independent), medium, or high (cooperative). " low medium high)) ;Store input into ?*User*
     (retract ?run-flag)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;; Filters ;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;
+
+;Filter out heroes that are too hard for the user
+(defrule filter-heroes-skill-low
+    (object (is-a PLAYER) (skill low))
+    ?hero <- (object (is-a HERO))
+    =>
+    (if (not (send ?hero difficulty-easy)) then
+        (send ?hero filter-out)
+    )
+)
+
+;Filter out heroes that are too hard for the user
+(defrule filter-heroes-medium
+    (object (is-a PLAYER) (skill medium))
+    ?hero <- (object (is-a HERO))
+    =>
+    (if (send ?hero difficulty-hard) then
+        (send ?hero filter-out)
+    )
+)
+
+;Filter based on weapon preference
+(defrule filter-heroes-weapon
+    (object (is-a PLAYER) (weapon_preference ~nil))
+    ?hero <- (object (is-a HERO))
+    =>
+    (if (neq (send ?hero get-attack_type) (send ?*User* get-weapon_preference)) then
+        (send ?hero filter-out)
+    )
+)
+
+;Filter out heroes that don't fit the user's aiming preference
+(defrule filter-heroes-aiming_preference
+    (object (is-a PLAYER) (aiming_preference ~nil))
+    ?hero <- (object (is-a HERO))
+    =>
+    (switch (send ?hero attack_speed)
+        (case auto then
+            ;if the user likes flicking and this is a tracking hero, remove it
+            (if (eq (send ?*User* get-aiming_preference) flicking) then
+                (send ?hero filter-out)
+            )
+        )
+        (case semi_auto then
+            ;if the user likes tracking and this is a flicking hero, remove it
+            (if (eq (send ?*User* get-aiming_preference) tracking) then
+                (send ?hero filter-out)
+            )
+        )
+    )
+)
+
+;Filter out heroes that are too reliant on their teams or not reliant enough
+(defrule filter-heroes-teamwork
+    ?player <- (object (is-a PLAYER) (teamwork low))
+    ?hero <- (object (is-a HERO))
+    =>
+    (switch (send ?user get-teamwork)
+        (case low then
+            (if (eq (send ?hero get-teamwork) high) then
+                (send ?hero filter-out)
+            )
+        )
+        (case high then
+            (if (eq (send ?hero get-teamwork) low) then
+                (send ?hero filter-out)
+            )
+        )
+    )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
