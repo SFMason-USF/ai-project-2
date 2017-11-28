@@ -461,7 +461,7 @@
     ?player <- (object (is-a PLAYER) (teamwork low))
     ?hero <- (object (is-a HERO))
     =>
-    (switch (send ?user get-teamwork)
+    (switch (send ?player get-teamwork)
         (case low then
             (if (eq (send ?hero get-teamwork) high) then
                 (send ?hero filter-out)
@@ -480,8 +480,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;If we're down to one hero, recommend him
-(defrule make-recommendation (declare (salience 5))
-    (= (length$ (find-all-instances ((?hero HERO)) (class HERO))) 1) ;There is only 1 hero left
+(defrule make-recommendation
+    (test (= (length$ (find-all-instances ((?hero HERO)) (class HERO))) 1)) ;There is only 1 hero left
     =>
     ;Recommend the hero
     (foreach ?hero (find-all-instances ((?hero HERO)) (class HERO))
@@ -490,9 +490,9 @@
 )
 
 ;If we've asked all our questions and still can't decide on a hero, tell the user to pick one of the remaining choices
-(defrule stumped (declare (salience 5))
-    (> (length$ (find-all-instances ((?hero HERO)) (class HERO))) 1) ;There are multiple heroes left
-    (>= ?*Questions-Asked* 7) ;All questions asked
+(defrule stumped
+    (test (> (length$ (find-all-instances ((?hero HERO)) (class HERO))) 1)) ;There are multiple heroes left
+    (test (>= ?*Questions-Asked* 7)) ;All questions asked
     =>
     (printout t "I don't know what to recommend to you. Try one of the following heroes:" crlf)
     (instances)
@@ -500,8 +500,8 @@
 )
 
 ;If we have no options for the user's particular attributes, tell them so and exit
-(defrule out-of-options (declare (salience 5))
-    (< (length$ (find-all-instances ((?hero HERO)) (class HERO))) 1) ;No more options left
+(defrule out-of-options
+    (test (< (length$ (find-all-instances ((?hero HERO)) (class HERO))) 1)) ;No more options left
     =>
     (printout t "I have no idea who you should play. Try again and provide different answers." crlf)
     (exit)
@@ -522,7 +522,7 @@
 (defrule bad-independent
     (object (is-a PLAYER) (skill low) (teamwork low))
     =>
-    (recommend-hero ?hero)
+    (recommend-hero [Reaper])
 )
 
 ;3. If the player is bad and likes a medium amount of cooperation, ask for aiming preference
@@ -648,12 +648,12 @@
     (recommend-hero [McCree])
 )
 
-;20. If the player is ok, likes hitscan, and is very cooperative, recommend [Bastion]
-(defrule ok-hitscan-cooperative
-    (object (is-a PLAYER) (skill medium) (weapon_preference hitscan) (teamwork high))
-    =>
-    (recommend-hero [Bastion])
-)
+;20. If the player is ok, likes hitscan, and is very cooperative, recommend [Bastion] -dupe rule
+;(defrule ok-hitscan-cooperative
+;    (object (is-a PLAYER) (skill medium) (weapon_preference hitscan) (teamwork high))
+;    =>
+;    (recommend-hero [Bastion])
+;)
 
 ;21. If the player is ok and likes projectiles, ask for aim preference
 (defrule ok-projectile
@@ -836,6 +836,6 @@
 
 (reset) ;Prepare ourselves...
 
-(printout t crlf crlf)
+(printout t crlf crlf crlf crlf crlf)
 
-;(run) ;And so it begins.
+(run) ;And so it begins.
