@@ -1,12 +1,14 @@
-;TODO: Refactor to eliminate instances from consideration rather than simply running a decision tree
-;when (= (length$ (find-all-instances ((?hero HERO)) (class HERO))) 1) resolves to TRUE, make a recommendation
-
-
 ;Overwatch Hero Recommendation System
 ;Author:        Spenser Mason
 ;Description:   This expert system will recommend a hero to start out with for newcomers to the video game Overwatch.
 ;Usage:         The easiest way to run this system is to run CLIPS from the command line with this file as the -f option.
-;               e.g: CLIPSDOS64.exe -f project2.clp
+;               Windows:    CLIPSDOS64.exe -f project2.clp
+;               Linux:      clips -f project2.clp
+;Note:  this can also be run from the clips ide, but this method is not recommended. This application was designed to be run from the command line.
+;       The primary issue with running this application from the clips ide is the system will automatically exit when done. This is preferable from
+;       the command line, as it gives control back to the OS shell. However, this will cause the ide to close itself immediately without giving the
+;       user a chance to read the output. I have deliberately decided to favor the command line usage of this application, so the user should keep
+;       this in mind when attempting to use this application in unintended ways.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;; Classes ;;;;;;;;
