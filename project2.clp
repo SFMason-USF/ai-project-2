@@ -836,8 +836,8 @@
     (recommend-hero [Genji])
 )
 
-(reset) ;Prepare ourselves...
+;(reset) ;Prepare ourselves...
 
-(printout t crlf crlf crlf crlf crlf)
+;(printout t crlf crlf crlf crlf crlf)
 
-(run) ;And so it begins.
+;(run) ;And so it begins.
