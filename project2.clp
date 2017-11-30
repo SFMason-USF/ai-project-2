@@ -435,7 +435,7 @@
     (object (is-a PLAYER) (aiming_preference ~nil))
     ?hero <- (object (is-a HERO))
     =>
-    (switch (send ?hero attack_speed)
+    (switch (send ?hero get-attack_speed)
         (case auto then
             ;if the user likes flicking and this is a tracking hero, remove it
             (if (eq (send ?*User* get-aiming_preference) flicking) then
