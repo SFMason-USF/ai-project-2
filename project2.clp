@@ -330,7 +330,7 @@
 (deffunction recommend-hero (?hero)
     (printout t crlf "The best hero for you would be:" crlf)
     (send ?hero print)
-    (exit)
+    ;(exit)
 )
 
 ;Prompt user for skill
@@ -491,7 +491,7 @@
     =>
     (printout t "I don't know what to recommend to you. Try one of the following heroes:" crlf)
     (instances)
-    (exit)
+    ;(exit)
 )
 
 ;If we have no options for the user's particular attributes, tell them so and exit
@@ -499,7 +499,7 @@
     (test (< (length$ (find-all-instances ((?hero HERO)) (class HERO))) 1)) ;No more options left
     =>
     (printout t "I have no idea who you should play. Try again and provide different answers." crlf)
-    (exit)
+    ;(exit)
 )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;
