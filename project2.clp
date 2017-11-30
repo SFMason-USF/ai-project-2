@@ -1,7 +1,7 @@
 ;Overwatch Hero Recommendation System
 ;Author:        Spenser Mason
-;Description:   This expert system will recommend a hero to start out with for newcomers to the video game Overwatch.
-;Usage:         Load this file into CLIPS, then call (reset) and then (run).
+;Description:   This expert system will recommend a hero to start out with for newcomers to the video game Overwatch. For more information on Overwatch, visit https://playoverwatch.com/en-us/
+;Usage:         Load this file into CLIPS with (load), then call (reset) and then (run).
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;; Classes ;;;;;;;;
