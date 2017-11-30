@@ -498,7 +498,7 @@
 (defrule out-of-options
     (test (< (length$ (find-all-instances ((?hero HERO)) (class HERO))) 1)) ;No more options left
     =>
-    (printout t "I have no idea who you should play. Try again and provide different answers." crlf)
+    ;(printout t "I have no idea who you should play. Try again and provide different answers." crlf)
     ;(exit)
 )
 
